@@ -1,0 +1,45 @@
+# Minimal PDVD raw-waveform dump: raw HDF5 -> decoded raw::RawDigit -> art-ROOT file.
+# No noise filter, no signal processing: just the TPC decoder.
+#
+#   lar -c dump_raw_pdvd.fcl -n 1 -s np02vd_raw_run045270_....hdf5
+#   -> <input-basename>_rawdump.root   (product  tpcrawdecoder:daq,  std::vector<raw::RawDigit>)
+#
+# Based on run_pdvd_wibeth_tpc_decoder.fcl from duneprototypes.
+
+#include "HDF5RawInput3.fcl"
+#include "PDVDTPCReader.fcl"
+
+process_name: rawdump
+
+services:
+{
+  TimeTracker:          {}
+  TFileService:         { fileName: "%ifb_rawdump_hist.root" }   # decoder status tree
+  HDF5RawFile3Service:  {}
+  TPCChannelMapService: { FileName: "PD2VDTPCChannelMap_v2.txt" } # electronics -> offline channel
+}
+
+source: @local::hdf5rawinput3          # reads the DAQ HDF5 file given with -s
+
+physics:
+{
+  producers:
+  {
+    tpcrawdecoder: @local::PDVDTPCReaderDefaults   # WIBEth frames -> one RawDigit per channel
+  }
+  produce:        [ tpcrawdecoder ]
+  output:         [ out1 ]
+  trigger_paths:  [ produce ]
+  end_paths:      [ output ]
+}
+
+outputs:
+{
+  out1:
+  {
+    module_type:      RootOutput
+    fileName:         "%ifb_rawdump.root"        # %ifb = input file basename
+    compressionLevel: 1
+    outputCommands:   [ "drop *", "keep raw::RawDigits_tpcrawdecoder_*_*" ]
+  }
+}

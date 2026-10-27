@@ -1,0 +1,32 @@
+# PDVD NF+SP with TRADITIONAL (threshold) ROI, from raw HDF5 input.
+#
+# Producer: wclsdatavd  (@local::protodunevd_nfsp)
+#   -> pgrapher/experiment/protodunevd/wcls-nf-sp.jsonnet
+#
+# This is the traditional-ROI arm of the per-channel electronics-response test.
+# The DNN arm is run_vd_nfsp_dnn_hdf5.fcl (producer wclsdatavddnn).
+#
+# Path is trimmed to  decode -> WCT NF+SP  only: NO imaging, no pandora, no
+# downstream reco.  (The base fcl's wclsdatavd is already protodunevd_nfsp,
+# which writes RawDigits+wires via wclsFrameSaver:spsaver.)
+#
+# Tick note: use_resampler stays "true" (the base default), so the frame enters
+# at the native 512 ns and pgrapher/common/resamplers.jsonnet converts the
+# BOTTOM anodes (0..3) to 500 ns before SP.  That matches the 500 ns binning of
+# protodunevd-params-channel-response-41603-no_avg_3-500ns.json.bz2, which
+# sp.jsonnet applies to those same bottom anodes only.
+
+#include "standard_reco_protodunevd_keepup.fcl"
+
+process_name: pdvdnfsptrad
+
+# Decode + WCT NF/SP only.  No imaging, no downstream reco.
+physics.produce: [ rns, tpcrawdecoder, triggerrawdecoder, wclsdatavd ]
+physics.trigger_paths: [ produce ]
+physics.end_paths:     [ output ]
+
+outputs.out1.fileName:       "%ifb_nfsp_trad.root"
+outputs.out1.outputCommands: [ "keep *" ]
+outputs.out1.fastCloning:    false
+
+services.TFileService.fileName: "%ifb_nfsp_trad_hist.root"

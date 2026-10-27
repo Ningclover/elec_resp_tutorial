@@ -1,0 +1,22 @@
+# .envrc for the electronics-response tutorial, WITHOUT spack.
+# Copy to the folder that should "activate" (e.g. your copy of elec_resp_tutorial/) as .envrc,
+# then run `direnv allow` once.  Every later `cd` into the folder activates it.
+#
+# Needs: direnv (hooked into your shell), python3 >= 3.9 with the venv module.
+
+# A private python virtual environment in ./.direnv/python-X.Y.Z (made on first entry).
+layout python python3
+
+# Install the tutorial's python packages on first entry (and whenever requirements.txt changes).
+watch_file env/requirements.txt
+if [[ ! -f .direnv/.req_installed || env/requirements.txt -nt .direnv/.req_installed ]]; then
+  pip install -q --disable-pip-version-check -r env/requirements.txt && touch .direnv/.req_installed
+fi
+
+# Let the tutorial scripts import each other (elecresp.py, pdvd_hdf5_decode.py).
+path_add PYTHONPATH "$PWD/script"
+
+# PDVD channel map: taken from /cvmfs by default.  Without /cvmfs, point this at a local copy.
+if [[ ! -d /cvmfs/dune.opensciencegrid.org ]]; then
+  export PDVD_CHANMAP="$PWD/data/PD2VDTPCChannelMap_v2.txt"
+fi

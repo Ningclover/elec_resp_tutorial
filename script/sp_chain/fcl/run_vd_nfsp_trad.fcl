@@ -1,0 +1,21 @@
+# PDVD NF+SP, TRADITIONAL (threshold) ROI, raw HDF5 input, dunesw v10_26_00d05.
+# In v10_26 keepup, wclsdatavd is the DNN producer, so the traditional
+# producer is set explicitly here.  use_resampler must be "true" so the
+# bottom anodes run SP at 500 ns, matching the 500 ns per-channel response.
+#include "standard_reco_protodunevd_keepup.fcl"
+
+process_name: pdvdnfsptrad
+
+physics.producers.wclsdatavd: @local::protodunevd_nfsp
+physics.producers.wclsdatavd.wcls_main.params.use_resampler: "true"
+physics.producers.wclsdatavd.wcls_main.params.signal_output_form: "dense"
+
+physics.produce: [ rns, tpcrawdecoder, triggerrawdecoder, wclsdatavd ]
+physics.trigger_paths: [ produce ]
+physics.end_paths:     [ output ]
+
+outputs.out1.fileName:       "%ifb_nfsp_trad.root"
+outputs.out1.outputCommands: [ "keep *", "drop raw::RawDigit*_*_*_*" ]
+outputs.out1.fastCloning:    false
+
+services.TFileService.fileName: "%ifb_nfsp_trad_hist.root"

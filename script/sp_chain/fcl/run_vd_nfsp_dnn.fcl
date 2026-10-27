@@ -1,0 +1,19 @@
+# PDVD NF+SP with DNN-ROI + L1SP (hybrid), raw HDF5 input, dunesw v10_26_00d05.
+# wclsdatavd in keepup is already protodunevd_nfsp_dnnroi (use_resampler
+# "true", use_l1sp_dnn true).
+#include "standard_reco_protodunevd_keepup.fcl"
+
+process_name: pdvdnfspdnn
+
+# For a bottom-only file (e.g. run039663 df-s04-d0) add:
+#   physics.producers.wclsdatavd.wcls_main.params.active_anodes: "0,1,2,3"
+
+physics.produce: [ rns, tpcrawdecoder, triggerrawdecoder, wclsdatavd ]
+physics.trigger_paths: [ produce ]
+physics.end_paths:     [ output ]
+
+outputs.out1.fileName:       "%ifb_nfsp_dnn.root"
+outputs.out1.outputCommands: [ "keep *", "drop raw::RawDigit*_*_*_*" ]
+outputs.out1.fastCloning:    false
+
+services.TFileService.fileName: "%ifb_nfsp_dnn_hist.root"

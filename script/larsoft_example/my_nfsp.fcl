@@ -1,0 +1,19 @@
+# PDVD NF + SP with the TRADITIONAL ROI, from raw HDF5, dunesw v10_26.
+# Starts from the production keepup job and changes only what we need.
+#include "standard_reco_protodunevd_keepup.fcl"
+
+process_name: mynfsp
+
+# keepup's wclsdatavd is the DNN-ROI producer in v10_26: choose the traditional one
+physics.producers.wclsdatavd: @local::protodunevd_nfsp
+# bottom anodes are sampled at 512 ns; resample to 500 ns (the response file is on 500 ns)
+physics.producers.wclsdatavd.wcls_main.params.use_resampler: "true"
+
+# run only: decoders + Wire-Cell NF/SP (no hits, pandora, ...)
+physics.produce:       [ rns, tpcrawdecoder, triggerrawdecoder, wclsdatavd ]
+physics.trigger_paths: [ produce ]
+physics.end_paths:     [ output ]
+
+outputs.out1.fileName:       "%ifb_mynfsp.root"
+outputs.out1.outputCommands: [ "keep *", "drop raw::RawDigit*_*_*_*" ]
+services.TFileService.fileName: "%ifb_mynfsp_hist.root"

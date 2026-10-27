@@ -1,0 +1,57 @@
+# PDHD electronics-response CALIBRATION noise-filter job (validation).
+#
+# Runs ONLY the WireCell noise-filter stage with the per-channel
+# electronics-response correction enabled (perChannelShaper), reading the
+# decoded RawDigits (tpcrawdecoder:daq) from a reco_stage1 art-ROOT file and
+# writing the response-equalized RawDigits as product "wclsdatahdfilter:raw".
+#
+# Driven by run_elec_calib.sh.  The corrected RawDigits are later dumped to a
+# magnify TH2 (convert_artroot_raw.C) and re-fit with the ideal cold-electronics
+# response (wf_fitter_ideal.C) to validate the per-channel equalization.
+
+#include "services_dune.fcl"
+#include "wirecell_dune.fcl"
+
+process_name: pdhdeleccalib
+
+services: {
+  TFileService:           { fileName: "%ifb_eleccalib_hist.root" }
+  TimeTracker:            {}
+  MemoryTracker:          {}
+  RandomNumberGenerator:  {}
+  message:                @local::dune_message_services_prod
+  @table::protodunehd_services
+}
+
+source: {
+  module_type: RootInput
+  maxEvents:   -1
+}
+
+physics: {
+  producers: {
+    # Per-channel electronics-response calibration NF.  Built from the
+    # standard protodunehd_nf block, only the WCT config is swapped for the
+    # calibration variant that adds the perChannelShaper.
+    wclsdatahdfilter: @local::protodunehd_nf
+  }
+  reco:    [ wclsdatahdfilter ]
+  stream1: [ out1 ]
+  trigger_paths: [ reco ]
+  end_paths:     [ stream1 ]
+}
+
+# Point the NF at the calibration WCT config (adds perChannelShaper + chresp).
+physics.producers.wclsdatahdfilter.wcls_main.configs: [ "pgrapher/experiment/pdhd/wcls_nf_elec_calib.jsonnet" ]
+physics.producers.wclsdatahdfilter.wcls_main.params.raw_input_label: "tpcrawdecoder:daq"
+physics.producers.wclsdatahdfilter.wcls_main.loglevels: @erase
+physics.producers.wclsdatahdfilter.wcls_main.logsinks: @erase
+
+outputs: {
+  out1: {
+    module_type: RootOutput
+    fileName:    "%ifb_eleccalib.root"
+    dataTier:    "reconstructed"
+    outputCommands: [ "keep *" ]
+  }
+}

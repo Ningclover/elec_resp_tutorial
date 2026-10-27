@@ -1,0 +1,11 @@
+# local environment (direnv venv, per-user .envrc)
+.direnv/
+.envrc
+.spack-user-cache/
+# python / test outputs
+__pycache__/
+*.pyc
+plots_test/
+# large or job outputs: raw data and art-ROOT files are not part of the tutorial
+*.hdf5
+*.root

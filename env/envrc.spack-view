@@ -1,0 +1,32 @@
+# .envrc for a workspace built on a spack "view" (the setup used to write the tutorial).
+# A view is one directory (./local) holding symlinks to a whole spack software stack:
+# python, ROOT, gcc libraries, boost, ... (and Wire-Cell's dependencies).
+# Make it first (see AGENT_ENV_SETUP.md), copy this file to the workspace as .envrc, `direnv allow`.
+
+# Where the tutorial sits inside this workspace (edit if you put it elsewhere).
+TUT="$PWD/elec_response/elec_resp_tutorial"
+
+# Put the view on PATH, LD_LIBRARY_PATH, PKG_CONFIG_PATH, CMAKE_PREFIX_PATH, MANPATH, ...
+load_prefix "$PWD/local"
+export PREFIX="$PWD/local"
+
+# ROOT from the view (host ROOT: root, root-config, PyROOT).
+export ROOTSYS="$(root-config --prefix)"
+path_add PYTHONPATH     "$PWD/local/lib/root"
+path_add LD_LIBRARY_PATH "$PWD/local/lib/root"
+
+# Python venv on top of the view's python (./local/bin/python3 comes first on PATH).
+layout python python3
+watch_file "$TUT/env/requirements.txt"
+if [[ ! -f .direnv/.req_installed || "$TUT/env/requirements.txt" -nt .direnv/.req_installed ]]; then
+  pip install -q --disable-pip-version-check -r "$TUT/env/requirements.txt" && touch .direnv/.req_installed
+fi
+
+# Let the tutorial scripts import each other.
+path_add PYTHONPATH "$TUT/script"
+
+# Optional, for Wire-Cell development in the same workspace (a toolkit checkout in ./toolkit):
+#   path_add WIRECELL_PATH "$PWD/local/share/wirecell"
+#   path_add WIRECELL_PATH "$PWD/toolkit/cfg"        # last path_add wins: live cfg shadows installed
+#   PATH_add "$PWD/toolkit/build/apps"
+#   path_add LD_LIBRARY_PATH "$PWD"/toolkit/build/{apps,aux,gen,iface,img,pgraph,sigproc,sio,util,root,clus}

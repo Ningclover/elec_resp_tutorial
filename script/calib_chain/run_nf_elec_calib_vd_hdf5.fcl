@@ -1,0 +1,41 @@
+# PDVD electronics-response CALIBRATION noise-filter job from RAW HDF5 input.
+#
+# Reads a raw HDF5 file (HDF5RawInput3), decodes TPC + trigger, then runs the
+# WireCell calibration noise filter (perChannelShaper) and saves both the
+# original (orig) and corrected (raw) RawDigits.  This is the full-from-raw
+# path (matches how Karla produced her known-good magnify files), bypassing any
+# pre-decoded reco_stage1 RawDigit product.
+#
+# Includes Karla's stage1 base for the HDF5 source, services, channel map and
+# decoder defaults, then trims the path to decode + calib NF only.
+
+#include "standard_reco_protodunevd_keepup.fcl"
+
+process_name: pdvdeleccalibh5
+
+# Use the calibration WCT NF in place of the standard NF producer.
+physics.producers.wclsdatavdfilter: @local::protodunevd_nf
+physics.producers.wclsdatavdfilter.wcls_main.configs: [ "pgrapher/experiment/protodunevd/wcls_nf_elec_calib.jsonnet" ]
+physics.producers.wclsdatavdfilter.wcls_main.params.raw_input_label: "tpcrawdecoder:daq"
+# Only the corrected (nf) digits are saved.  The uncorrected before-image comes
+# from "tpcrawdecoder:daq" directly (the inline origsaver writes 0 RawDigits in
+# this WCLS version, so it was dropped from the graph).
+physics.producers.wclsdatavdfilter.wcls_main.outputers: [ "wclsFrameSaver:nfsaver" ]
+physics.producers.wclsdatavdfilter.wcls_main.loglevels: @erase
+physics.producers.wclsdatavdfilter.wcls_main.logsinks: @erase
+
+# Reduce the path to: decoders -> calibration NF.
+physics.produce: [ tpcrawdecoder, triggerrawdecoder, wclsdatavdfilter ]
+physics.trigger_paths: [ produce ]
+physics.end_paths:     [ output ]
+
+outputs.out1.fileName:        "%ifb_eleccalib_h5.root"
+outputs.out1.outputCommands:  [ "keep *" ]
+
+services.TFileService.fileName: "%ifb_eleccalib_h5_hist.root"
+
+# No resampler: keep the whole job on the NATIVE 512 ns sampling so the
+# wclsFrameSaver digitizes on the same grid as the 512 ns frame.  (1/0.512us =
+# 1.953125 MHz.)  A 500 ns clock here would put the 512 ns traces off-grid and
+# the saver would emit empty 0-sample RawDigits.
+services.DetectorClocksService.ClockSpeedTPC: 1.953125

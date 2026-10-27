@@ -1,0 +1,15 @@
+# PDVD NF + SP with DNN-ROI + L1SP (the v10_26 keepup default), for a file that
+# holds only the bottom drift (e.g. run039663 df-s04-d0): tell Wire-Cell which anodes exist.
+#include "standard_reco_protodunevd_keepup.fcl"
+
+process_name: mynfspdnn
+
+physics.producers.wclsdatavd.wcls_main.params.active_anodes: "0,1,2,3"
+
+physics.produce:       [ rns, tpcrawdecoder, triggerrawdecoder, wclsdatavd ]
+physics.trigger_paths: [ produce ]
+physics.end_paths:     [ output ]
+
+outputs.out1.fileName:       "%ifb_mynfspdnn.root"
+outputs.out1.outputCommands: [ "keep *", "drop raw::RawDigit*_*_*_*" ]
+services.TFileService.fileName: "%ifb_mynfspdnn_hist.root"

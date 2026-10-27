@@ -1,0 +1,8 @@
+# Python packages for the electronics-response tutorial (pip install -r requirements.txt).
+# Versions in comments are the ones the tutorial was tested with (python 3.11.9, Debian 12).
+numpy>=1.24        # 2.3.5
+scipy>=1.10        # 1.16.3   (page 4 fits: scipy.optimize.least_squares)
+matplotlib>=3.7    # 3.10.8
+h5py>=3.8          # 3.15.1   (raw DAQ HDF5 files)
+uproot>=5.0        # 5.7.5    (pages 7, 10: read ROOT trees without ROOT)
+awkward>=2.0       # 2.10.0   (installed with uproot)

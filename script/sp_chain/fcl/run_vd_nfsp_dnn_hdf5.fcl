@@ -1,0 +1,37 @@
+# PDVD NF+SP with DNN-ROI + L1SP (hybrid), from raw HDF5 input.
+#
+# Producer: wclsdatavddnn  (@local::protodunevd_nfsp_dnnroi)
+#   -> pgrapher/experiment/protodunevd/wcls-nf-sp-dnnroi.jsonnet
+#
+# This is the DNN arm of the per-channel electronics-response test.  The
+# traditional-ROI arm is run_vd_nfsp_trad_hdf5.fcl (producer wclsdatavd).
+#
+# Path is trimmed to  decode -> WCT NF+SP+DNNROI+L1SP  only: NO imaging, no
+# pandora, no downstream reco.  The stock wclsdatavd producer is dropped so
+# only the DNN chain runs.
+#
+# Requires WireCellPytorch (TorchService) and the DNN-ROI / L1SP TorchScript
+# models on WIRECELL_PATH under wire-cell-data/dnnroi/pdvd and l1sp/pdvd.
+#
+# Tick note: same as the traditional arm -- use_resampler "true", so bottom
+# anodes are resampled 512 -> 500 ns before SP, matching the 500 ns per-channel
+# response file that sp.jsonnet applies to anodes 0..3.
+
+#include "standard_reco_protodunevd_keepup.fcl"
+
+process_name: pdvdnfspdnn
+
+# The DNN NF+SP+DNNROI+L1SP producer.
+physics.producers.wclsdatavddnn: @local::protodunevd_nfsp_dnnroi
+
+# Decode + WCT DNN chain only.  No imaging, no downstream reco, and the stock
+# traditional wclsdatavd is NOT in the path.
+physics.produce: [ rns, tpcrawdecoder, triggerrawdecoder, wclsdatavddnn ]
+physics.trigger_paths: [ produce ]
+physics.end_paths:     [ output ]
+
+outputs.out1.fileName:       "%ifb_nfsp_dnn.root"
+outputs.out1.outputCommands: [ "keep *" ]
+outputs.out1.fastCloning:    false
+
+services.TFileService.fileName: "%ifb_nfsp_dnn_hist.root"
