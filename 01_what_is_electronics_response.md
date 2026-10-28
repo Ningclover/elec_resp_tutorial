@@ -69,8 +69,7 @@ SP divides each channel's spectrum by (field response × electronics response). 
 
 ```bash
 cd script
-python3 p1_ideal_response.py                        # -> plots/p1_*.png
-./check_formula_vs_wct.sh /path/to/wire-cell-toolkit  # python vs C++ formulas
+python3 p1_ideal_response.py    # -> plots/p1_*.png
 ```
 
 ---

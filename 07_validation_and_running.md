@@ -31,7 +31,7 @@ Ingredients (originals at FNAL under `/exp/dune/data/users/xning/proto-dune-vd/`
 | drivers | `run_elec_calib.sh` (outside the container: wraps apptainer), `incontainer_elec_calib.sh`, `reprocess_vd_scan.sh` (all 9 scan runs) |
 | ROOT macros | `vd_convert_orig_raw.C`, `vd_convert_artroot_raw.C`, `vd_orig_vs_raw_compare.C`, `wf_fitter_ideal.C`, `wf_gain_scan_ours.C`, `plot_gain_tp_ours.C`, `plot_charge_vs_a0_ours.C`, `peaking_time_from_artroot.C` |
 
-Typical use (from `../unpacked/elec_res_share/elec_res/HANDOFF_elec_calib.md`):
+Typical use (step by step in [`script/calib_chain/ELEC_CALIB_NOTE.md`](script/calib_chain/ELEC_CALIB_NOTE.md)):
 
 ```bash
 cd $PROTO/elec_res                       # PROTO=/exp/dune/data/users/xning/proto-dune-vd
@@ -53,11 +53,11 @@ root -b -q 'plot_gain_tp_ours.C("vd")'
 |---|---|
 | ![](plots/previous/peaking_time_vd_ours.png) | ![](plots/previous/slope_dAdQ_vd_ours.png) |
 
-*Red: without the correction. Blue: with it. tp moves to the nominal 2.2 µs (2.047 ± 0.072 → 2.198 ± 0.020 µs), and the gain distribution narrows around 7.8 mV/fC ([page 5](05_linearity_and_gain.md)). Same histograms as slide 6 of [`../20260701.pdf`](../20260701.pdf).*
+*Red: without the correction. Blue: with it. tp moves to the nominal 2.2 µs (2.047 ± 0.072 → 2.198 ± 0.020 µs), and the gain distribution narrows around 7.8 mV/fC ([page 5](05_linearity_and_gain.md)). Same histograms as slide 6 of the 1 July 2026 slides ([Sources](README.md#sources)).*
 
 ## B. NF+SP with the correction ON vs OFF on physics data
 
-`script/sp_chain/` is the self-contained bundle described in [`../NFSP_PCRESP_NOTE.md`](../NFSP_PCRESP_NOTE.md), tested with dunesw v10_26_00d05. It runs four jobs: {traditional ROI, DNN-ROI} × {correction off, on}. It then flattens the `gauss` output and plots ON vs OFF.
+`script/sp_chain/` is the self-contained bundle described in [`script/sp_chain/NFSP_PCRESP_NOTE.md`](script/sp_chain/NFSP_PCRESP_NOTE.md), tested with dunesw v10_26_00d05. It runs four jobs: {traditional ROI, DNN-ROI} × {correction off, on}. It then flattens the `gauss` output and plots ON vs OFF.
 
 ```bash
 mkdir work && cd work

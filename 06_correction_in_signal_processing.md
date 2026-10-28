@@ -43,7 +43,7 @@ Both responses are sampled from the same start time (`t0 = −2.75 µs` from the
 
 ## Configuration (PDVD, dunesw v10_26)
 
-Two one-line edits to the release `wire-cell-cfg` switch the correction on. The full recipe is in [`../NFSP_PCRESP_NOTE.md`](../NFSP_PCRESP_NOTE.md), and the edited files are in `script/sp_chain/cfg_v10_26/`.
+Two one-line edits to the release `wire-cell-cfg` switch the correction on. The full recipe is in [`script/sp_chain/NFSP_PCRESP_NOTE.md`](script/sp_chain/NFSP_PCRESP_NOTE.md), and the edited files are in `script/sp_chain/cfg_v10_26/`.
 
 | file | edit |
 |---|---|
@@ -95,7 +95,7 @@ This is how production uses it: a file fitted months earlier (`41603-no_avg_3`, 
 | ideal-fit tp, median (width) | 2.079 µs (0.051) | 2.200 µs (0.001) | 2.208 µs (0.016) |
 | height / Q, width | 0.140 mV/fC | 0.013 mV/fC | 0.051 mV/fC |
 
-The 8-month-old file still removes most of the channel-to-channel difference: the tp width shrinks by a factor 3 and the height width by a factor 2.7. It is not as good as a fresh fit, which matches the stability study on [page 4](04_fitting_per_channel.md). These numbers are close to the January result on slide 6 of [`../20260701.pdf`](../20260701.pdf) (copied on [page 7](07_validation_and_running.md)).
+The 8-month-old file still removes most of the channel-to-channel difference: the tp width shrinks by a factor 3 and the height width by a factor 2.7. It is not as good as a fresh fit, which matches the stability study on [page 4](04_fitting_per_channel.md). These numbers are close to the January result on slide 6 of the 1 July 2026 slides ([Sources](README.md#sources)) (copied on [page 7](07_validation_and_running.md)).
 
 ## Run it
 

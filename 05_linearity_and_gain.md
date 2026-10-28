@@ -10,7 +10,7 @@ The arithmetic chain is DAC → charge → mV → ADC:
 
   1 DAC = 2.651 fC;  × 7.8 mV/fC = 20.7 mV;  × 11.703 ADC/mV = **242 ADC per DAC step** (true peak).
 
-The six example channels on slide 5 of [`../20260701.pdf`](../20260701.pdf) measure 242–257 ADC/DAC, as expected.
+The six example channels on slide 5 of the 1 July 2026 slides ([Sources](README.md#sources)) measure 242–257 ADC/DAC, as expected.
 
 ![expected line and ADC headroom](plots/p5_expected_line.png)
 

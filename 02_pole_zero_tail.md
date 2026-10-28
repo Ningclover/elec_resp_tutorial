@@ -12,7 +12,7 @@ If the zero lands exactly on the pole, the cancellation is perfect and the outpu
 - its length is set by the leftover pole: a decay time of about 1/k;
 - its size is set by how far apart the zero and pole are.
 
-LArASIC has two such stages. Wire-Cell parameterizes them as in X. Qian's study ([`../fit_response.pptx`](../fit_response.pptx)), based on input from the BNL ASIC designer (Prashansa Mukin):
+LArASIC has two such stages. Wire-Cell parameterizes them as in X. Qian's study (slides "Analytical form of LArASIC electronics response with imperfect pole-zero cancellation", see [Sources](README.md#sources)), based on input from the BNL ASIC designer (Prashansa Mukin):
 
 ![transfer function with imperfect pole-zero cancellation](plots/previous/pz_transfer_function_k3k6.png)
 
@@ -63,7 +63,7 @@ In frequency space the difference sits mostly at **low frequency** (below ~20 kH
 
 ### The k4 = k6 trap
 
-The closed-form C++ divides by (k4 − k6). If a fit lands with **k4 exactly equal to k6**, that channel's response is NaN at every sample. In SP that one NaN channel spreads through the wire-direction FFT and silently wipes out the whole plane (zero charge, no error message). Known cases: channel 3209 in `41603-no_avg_3`, and 5 and 7 channels in `41573-no_avg_4` and `41602-no_avg_3`. Section 7 of [`../NFSP_PCRESP_NOTE.md`](../NFSP_PCRESP_NOTE.md) has the full story, and `regen_chresp_tick.py --check/--fix-pole` finds and fixes these channels ([page 6](06_correction_in_signal_processing.md)). `check_formula_vs_wct.sh` includes such a channel as set 3: the C++ and Python both return NaN there.
+The closed-form C++ divides by (k4 − k6). If a fit lands with **k4 exactly equal to k6**, that channel's response is NaN at every sample. In SP that one NaN channel spreads through the wire-direction FFT and silently wipes out the whole plane (zero charge, no error message). Known cases: channel 3209 in `41603-no_avg_3`, and 5 and 7 channels in `41573-no_avg_4` and `41602-no_avg_3`. Section 7 of [`script/sp_chain/NFSP_PCRESP_NOTE.md`](script/sp_chain/NFSP_PCRESP_NOTE.md) has the full story, and `regen_chresp_tick.py --check/--fix-pole` finds and fixes these channels ([page 6](06_correction_in_signal_processing.md)). `check_formula_vs_wct.sh` includes such a channel as set 3: the C++ and Python both return NaN there.
 
 ## Run it
 

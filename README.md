@@ -83,8 +83,7 @@ elec_resp_tutorial/
 
 ## Sources
 
-- Previous slides: [`../20260701.pdf`](../20260701.pdf) (X. Ning, K. Tellez Giron Flores) and [`../fit_response.pptx`](../fit_response.pptx) (X. Qian, "Analytical form of LArASIC electronics response with imperfect pole-zero cancellation").
-- Agent logs and the share bundle (unpacked in `../unpacked/`): `agent_log/2026-06-16-elec-response-codebase-map.md`, `2026-06-17-elec-calib-pipeline.md`, `2026-06-25-vd-reprocess-gainscan-units.md`, `elec_res/HANDOFF_elec_calib.md`.
-- Notes in this folder: [`../ELEC_CALIB_NOTE.md`](../ELEC_CALIB_NOTE.md) and [`../NFSP_PCRESP_NOTE.md`](../NFSP_PCRESP_NOTE.md).
+- Slides (not in this repository; ask the authors): 1 July 2026 talk on the per-channel response calibration (X. Ning, K. Tellez Giron Flores), and "Analytical form of LArASIC electronics response with imperfect pole-zero cancellation" (X. Qian).
+- Notes: [`script/calib_chain/ELEC_CALIB_NOTE.md`](script/calib_chain/ELEC_CALIB_NOTE.md) (measuring the response, FNAL paths) and [`script/sp_chain/NFSP_PCRESP_NOTE.md`](script/sp_chain/NFSP_PCRESP_NOTE.md) (using it in NF+SP).
 - Papers: MicroBooNE noise paper [arXiv:1705.07341](https://arxiv.org/abs/1705.07341) (ideal response, eq. 3.1–3.2); MicroBooNE SP paper II [arXiv:1804.02583](https://arxiv.org/abs/1804.02583) (per-channel response correction).
 - Fitted response files (K. Tellez Giron Flores): `/exp/dune/data/users/ktellez/wf_correction/wc-params/`.

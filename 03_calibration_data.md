@@ -23,7 +23,7 @@ Calibration campaigns repeat this at several DAC settings (a **DAC scan**). The 
 |---|---|---|---|---|---|---|---|---|
 | DAC | 5 | 10 | 15 | 20 | 25 | 30 | 35 | 40 |
 
-(from [`../20260701.pdf`](../20260701.pdf), slide 2. HD DAC values are from the run-conditions database via `calib_chain/get_pulser_dac.py`. The VD database rows have no `pulse_dac`, so the VD values come from the run plan.)
+(from slide 2 of the 1 July 2026 slides ([Sources](README.md#sources)). HD DAC values are from the run-conditions database via `calib_chain/get_pulser_dac.py`. The VD database rows have no `pulse_dac`, so the VD values come from the run plan.)
 
 One run at one DAC is enough to measure the **shape** of each channel's response ([page 4](04_fitting_per_channel.md)). To measure the **gain** and check **linearity**, you need the whole scan ([page 5](05_linearity_and_gain.md)).
 

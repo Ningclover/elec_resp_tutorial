@@ -10,7 +10,7 @@ All scripts are in [`script/`](script/). The Python tutorial scripts run on any 
 |---|---|---|---|
 | [`make_all_plots.sh`](script/make_all_plots.sh) | all | pulser HDF5, response file, [gain-scan tables, toolkit source] | every `plots/p*.png`, `data/avg_pulses_run*.npz`, `data/fit_run*.npz` |
 | [`elecresp.py`](script/elecresp.py) | 1, 2 | — (module) | `coldelec()`, `paramscoldelec()`, `transfer()`, `load_chresp()`; units |
-| [`check_formula_vs_wct.sh`](script/check_formula_vs_wct.sh) | 1, 2 | toolkit source tree | compiles the C++ `coldelec`/`paramscoldelec` and compares them with `elecresp.py` |
+| [`check_formula_vs_wct.sh`](script/check_formula_vs_wct.sh) | 1, 2 | g++ only; toolkit source tree optional | *Maintainer check, not needed to follow the tutorial.* Compiles the C++ `coldelec`/`paramscoldelec` (copy in [`wct_response_functions.cxx`](script/wct_response_functions.cxx), or from a toolkit tree if given) and compares them with `elecresp.py` |
 | [`pdvd_hdf5_decode.py`](script/pdvd_hdf5_decode.py) | 3 | raw HDF5 | module + CLI: WIBEth decoding → (6144, nticks) ADC array by offline channel |
 | [`p1_ideal_response.py`](script/p1_ideal_response.py) | 1 | — | `p1_ideal_*.png` |
 | [`p2_pole_zero_tail.py`](script/p2_pole_zero_tail.py) | 2 | response file | `p2_toy_tails.png`, `p2_real_channels.png`, `p2_ratio_spectrum.png`, `p2_tail_fraction.png` |
@@ -45,7 +45,7 @@ These are copies of the scripts from the share bundle (`elec_res_share.tar.bz2`)
 
 ## NF+SP ON/OFF bundle, `script/sp_chain/` (self-contained)
 
-A copy of `nfsp_share/`, with the 500 ns response file in `sp_chain/data/`. It has no machine-specific paths. Details are in [`../NFSP_PCRESP_NOTE.md`](../NFSP_PCRESP_NOTE.md).
+A copy of `nfsp_share/`, with the 500 ns response file in `sp_chain/data/`. It has no machine-specific paths. Details are in [`script/sp_chain/NFSP_PCRESP_NOTE.md`](script/sp_chain/NFSP_PCRESP_NOTE.md).
 
 | script | what it does |
 |---|---|

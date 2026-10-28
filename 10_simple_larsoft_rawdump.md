@@ -13,17 +13,23 @@ The files are in [`script/larsoft_rawdump/`](script/larsoft_rawdump/):
 | [`plot_raw_waveforms.py`](script/larsoft_rawdump/plot_raw_waveforms.py) | host, `python3` | the plots below |
 
 Example input: the pulser run of [page 3](03_calibration_data.md),
-`/nfs/data/1/xning/wirecell-working/elec_response/np02vd_raw_run045270_0000_df-s04-d0_dw_0_20260929T175649.hdf5`.
+`np02vd_raw_run045270_0000_df-s04-d0_dw_0_20260929T175649.hdf5` (2.4 GB).
 
 ## Step 0: pick a work directory (on the host)
 
+Set three names once. They are used in every step below (the container sees them too):
+
 ```bash
-mkdir -p /nfs/data/1/$USER/rawdump_test
-cd /nfs/data/1/$USER/rawdump_test
-cp /nfs/data/1/xning/wirecell-working/elec_response/elec_resp_tutorial/script/larsoft_rawdump/* .
+TUT=/path/to/elec_resp_tutorial                  # where you cloned this tutorial
+H5=/path/to/np02vd_raw_run045270_0000_df-s04-d0_dw_0_20260929T175649.hdf5
+WORK=/path/to/a/disk/with/a/few/GB/rawdump_test  # a directory you own
+
+mkdir -p $WORK/home
+cd $WORK
+cp $TUT/script/larsoft_rawdump/* .
 ```
 
-`lar` writes its output in the current directory, so start in a directory you own.
+`lar` writes its output in the current directory, so start in a directory you own. On wcgpu1 the input file is `/nfs/data/1/xning/wirecell-working/elec_response/np02vd_raw_run045270_0000_df-s04-d0_dw_0_20260929T175649.hdf5` and a good `WORK` is `/nfs/data/1/$USER/rawdump_test`.
 
 ## Step 1: enter the SL7 container
 
@@ -31,8 +37,8 @@ dunesw is built for Scientific Linux 7. This machine runs a newer Linux, so LArS
 
 ```bash
 /cvmfs/oasis.opensciencegrid.org/mis/apptainer/current/bin/apptainer shell --shell=/bin/bash \
-    --no-home -H /nfs/data/1/$USER/home \
-    -B /cvmfs,/nfs,/opt,/etc/hostname,/etc/hosts,/etc/krb5.conf \
+    --no-home -H $WORK/home \
+    -B /cvmfs,$WORK,$(dirname $H5),/etc/hostname,/etc/hosts,/etc/krb5.conf \
     --ipc --pid /cvmfs/singularity.opensciencegrid.org/fermilab/fnal-dev-sl7:latest
 ```
 
@@ -41,12 +47,12 @@ What the options mean:
 | option | meaning |
 |---|---|
 | `--shell=/bin/bash` | the shell you get inside |
-| `--no-home -H /nfs/data/1/$USER/home` | do not mount the real home; use this directory as `$HOME` inside, so host login files (`.bashrc` with host-only setups) do not leak in |
-| `-B /cvmfs,/nfs,...` | directories made visible inside ("bind mounts"). `/cvmfs` has the software and `/nfs` has your data and work area. **A directory not listed here does not exist inside the container.** Add your own with `,/my/dir` |
+| `--no-home -H $WORK/home` | do not mount the real home; use this (empty) directory as `$HOME` inside, so host login files (`.bashrc` with host-only setups) do not leak in |
+| `-B /cvmfs,$WORK,$(dirname $H5),...` | directories made visible inside ("bind mounts"). `/cvmfs` has the software, `$WORK` is your work area and `$(dirname $H5)` holds the input file. **A directory not listed here does not exist inside the container.** Add your own with `,/my/dir` |
 | `--ipc --pid` | private process space, so the job is cleaned up when you leave |
 | last argument | the SL7 image, served from `/cvmfs` |
 
-The prompt changes to `Apptainer>`. You are still in the same directory (it is under `/nfs`). A warning `group: unknown groupid ...` is harmless. Type `exit` to leave.
+The prompt changes to `Apptainer>`. You are still in the same directory (`$WORK`). A warning `group: unknown groupid ...` is harmless. Type `exit` to leave.
 
 ## Step 2: set up dunesw (inside the container)
 
@@ -70,7 +76,7 @@ echo $FHICL_FILE_PATH | tr : '\n' | head -3   # where lar looks for #include'd f
 
 ```bash
 lar -c dump_raw_pdvd.fcl -n 1 \
-    -s /nfs/data/1/xning/wirecell-working/elec_response/np02vd_raw_run045270_0000_df-s04-d0_dw_0_20260929T175649.hdf5
+    -s $H5
 ```
 
 | option | meaning |
@@ -197,8 +203,7 @@ Once the steps make sense, you can run them from the host without an interactive
 ```bash
 APP=/cvmfs/oasis.opensciencegrid.org/mis/apptainer/current/bin/apptainer
 IMG=/cvmfs/singularity.opensciencegrid.org/fermilab/fnal-dev-sl7:latest
-H5=/nfs/data/1/xning/wirecell-working/elec_response/np02vd_raw_run045270_0000_df-s04-d0_dw_0_20260929T175649.hdf5
-$APP exec --no-home -H /nfs/data/1/$USER/home -B /cvmfs,/nfs --ipc --pid $IMG /bin/bash -c "
+$APP exec --no-home -H $WORK/home -B /cvmfs,$WORK,$(dirname $H5) --ipc --pid $IMG /bin/bash -c "
   cd $PWD
   export TMPDIR=/tmp
   source /cvmfs/dune.opensciencegrid.org/products/dune/setup_dune.sh

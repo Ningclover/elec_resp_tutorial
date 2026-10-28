@@ -1,15 +1,24 @@
 #!/bin/bash
 # Check that elecresp.py reproduces the toolkit's C++ response functions.
 #
-# Cuts Response::coldelec and Response::paramscoldelec out of the toolkit
-# source, compiles them stand-alone with g++, evaluates them on a time grid for
-# a few parameter sets, and compares with elecresp.py.
+# Compiles the C++ Response::coldelec and Response::paramscoldelec stand-alone
+# with g++, evaluates them on a time grid for a few parameter sets, and
+# compares with elecresp.py.
 #
-# Usage:  ./check_formula_vs_wct.sh <path-to-wire-cell-toolkit>
+# Usage:  ./check_formula_vs_wct.sh [path-to-wire-cell-toolkit]
+#   no argument : use the copy of the two functions in wct_response_functions.cxx
+#                 (no toolkit needed)
+#   with a path : cut the two functions out of <path>/util/src/Response.cxx
+#                 instead, to check against a newer toolkit
 set -euo pipefail
-WCT=${1:?usage: $0 <path-to-wire-cell-toolkit>}
 HERE=$(cd "$(dirname "$0")" && pwd)
-SRC=$WCT/util/src/Response.cxx
+if [[ $# -ge 1 ]]; then
+  SRC=$1/util/src/Response.cxx
+  [[ -f $SRC ]] || { echo "no $SRC" >&2; exit 1; }
+else
+  SRC=$HERE/wct_response_functions.cxx
+fi
+echo "C++ source: $SRC"
 WORK=$(mktemp -d "${TMPDIR:-/tmp}/elecresp_check.XXXX")
 
 {

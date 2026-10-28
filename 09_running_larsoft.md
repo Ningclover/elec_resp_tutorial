@@ -4,7 +4,7 @@
 
 # 9. Running the LArSoft job: container, dunesw, your own jsonnet and fcl
 
-This page is a hands-on guide to running Wire-Cell NF + SP through LArSoft with your own settings, for example with the per-channel electronics response switched on. Everything here was run on 2026-10-26 with **dunesw v10_26_00d05**. The example scripts are in [`script/larsoft_example/`](script/larsoft_example/), and the bigger ON/OFF bundle they borrow from is `../nfsp_share/` (also in `script/sp_chain/`).
+This page is a hands-on guide to running Wire-Cell NF + SP through LArSoft with your own settings, for example with the per-channel electronics response switched on. Everything here was run on 2026-10-26 with **dunesw v10_26_00d05**. The example scripts are in [`script/larsoft_example/`](script/larsoft_example/), and the bigger ON/OFF bundle they borrow from is [`script/sp_chain/`](script/sp_chain/).
 
 ## The key idea: change text files, not libraries
 
@@ -51,7 +51,7 @@ dunesw is built for Scientific Linux 7, so on a modern host (wcgpu1 is Debian 12
 ```bash
 APP=/cvmfs/oasis.opensciencegrid.org/mis/apptainer/current/bin/apptainer   # or "apptainer" if installed
 IMAGE=/cvmfs/singularity.opensciencegrid.org/fermilab/fnal-dev-sl7:latest
-$APP shell --no-home -H $HOME -B /cvmfs,/nfs/data/1/xning --ipc --pid $IMAGE
+$APP shell --no-home -H $HOME -B /cvmfs,/path/to/your/data,/path/to/your/work --ipc --pid $IMAGE
 ```
 
 - `-B` lists every directory you need to see inside (bind mounts). **Your data and your work area must be in this list.** Anything else does not exist inside the container.
@@ -261,14 +261,14 @@ lar -c eventdump.fcl -s *_mynfsp.root -n 1                                # prod
 
 ## Bigger example: the ON/OFF bundle
 
-`../nfsp_share/` (copied as [`script/sp_chain/`](script/sp_chain/)) is the same recipe made into a tool for colleagues. Its `env.sh` holds `enter_container` and `setup_dunesw` (steps 1–2), and `run_nfsp.sh ARM on|off INPUT NEVTS` does steps 4–6 for {traditional, DNN} × {off, on}. `run_all.sh` runs all four jobs and makes the comparison plots of [page 7](07_validation_and_running.md):
+[`script/sp_chain/`](script/sp_chain/) is the same recipe made into a tool for colleagues. Its `env.sh` holds `enter_container` and `setup_dunesw` (steps 1–2), and `run_nfsp.sh ARM on|off INPUT NEVTS` does steps 4–6 for {traditional, DNN} × {off, on}. `run_all.sh` runs all four jobs and makes the comparison plots of [page 7](07_validation_and_running.md):
 
 ```bash
 mkdir work && cd work
 ../script/sp_chain/run_all.sh /path/to/np02vd_raw_run039252_...hdf5 3 039252
 ```
 
-Environment knobs: `DUNESW_VER`, `DUNESW_QUAL`, `SL7_IMAGE`, `APPTAINER`, `CONTAINER_HOME`, `EXTRA_BINDS`, `OUTDIR`, `ACTIVE_ANODES` (see [`../NFSP_PCRESP_NOTE.md`](../NFSP_PCRESP_NOTE.md)). To move to a newer dunesw, set `DUNESW_VER`. The scripts copy *that* release's `wire-cell-cfg` and stop if the two edited lines changed.
+Environment knobs: `DUNESW_VER`, `DUNESW_QUAL`, `SL7_IMAGE`, `APPTAINER`, `CONTAINER_HOME`, `EXTRA_BINDS`, `OUTDIR`, `ACTIVE_ANODES` (see [`script/sp_chain/NFSP_PCRESP_NOTE.md`](script/sp_chain/NFSP_PCRESP_NOTE.md)). To move to a newer dunesw, set `DUNESW_VER`. The scripts copy *that* release's `wire-cell-cfg` and stop if the two edited lines changed.
 
 ---
 ← [8. Script index](08_script_index.md) · Next: [10. A first LArSoft run, line by line →](10_simple_larsoft_rawdump.md)

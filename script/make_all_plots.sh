@@ -8,7 +8,8 @@
 #   response.json.bz2  a fitted per-channel response file, e.g.
 #                      protodunevd-params-channel-response-41603-no_avg_3.json.bz2
 #   gainscan_*.txt     outputs of calib_chain/wf_gain_scan_ours.C (default: ../data/)
-#   wire-cell-toolkit  source tree, only for the formula cross-check (optional)
+#   wire-cell-toolkit  source tree for the formula cross-check (optional; without it
+#                      the copy in wct_response_functions.cxx is used)
 #
 # Needs python3 with numpy, scipy, matplotlib, h5py and /cvmfs (for the PDVD channel
 # map; or set PDVD_CHANMAP=/path/to/PD2VDTPCChannelMap_v2.txt).  Takes ~3 min on 32 cores.
@@ -28,10 +29,8 @@ cd "$HERE"
 RUN=$(python3 -c "import h5py,sys; print(int(h5py.File(sys.argv[1],'r').attrs['run_number']))" "$HDF5")
 echo "== run $RUN"
 
-if [[ -n "$WCT" ]]; then
-  echo "== check python formulas against the toolkit C++"
-  ./check_formula_vs_wct.sh "$WCT" | tee "$PLOTS/check_formula_vs_wct.txt"
-fi
+echo "== check python formulas against the toolkit C++"
+./check_formula_vs_wct.sh ${WCT:+"$WCT"} | tee "$PLOTS/check_formula_vs_wct.txt"
 echo "== page 1: ideal response";            python3 p1_ideal_response.py --outdir "$PLOTS"
 echo "== page 2: pole-zero tail";            python3 p2_pole_zero_tail.py "$CHRESP" --outdir "$PLOTS"
 echo "== page 3: raw pulser data";           python3 p3_raw_pulser.py "$HDF5" --outdir "$PLOTS"
