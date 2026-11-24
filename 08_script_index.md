@@ -57,6 +57,16 @@ A copy of `nfsp_share/`, with the 500 ns response file in `sp_chain/data/`. It h
 | `regen_chresp_tick.py IN --tick 500 [--check] [--fix-pole]` | re-grid a response file to another tick; find/fix k4 = k6 channels |
 | `plot/dump_wires.{sh,C}`, `plot/plot_pcresp.py` | recob::Wire → flat TTree; ON/OFF plots and ratio tables |
 
+## Noise RMS per channel, `script/noise_rms/` (self-contained)
+
+Measures the noise of every channel, before and after the noise filter, and plots it in electrons. Details and the method are in [`script/noise_rms/README.md`](script/noise_rms/README.md).
+
+| script | what it does |
+|---|---|
+| `launch_container.sh SCRIPT [args]` | runs a script in the SL7 container (`EXTRA_BINDS` for data dirs) |
+| `step1_nf/run_nf_pdvd.sh RAW.hdf5 [OUTDIR]` | `lar` noise-filter-only job → artROOT with raw + filtered waveforms |
+| `step2_rms/run_rms_pdvd.sh NF.root [OUTDIR]` | ROOT macro: robust RMS per channel → noise histograms in electrons (`rms_*.png`) |
+
 ## Minimal LArSoft example, `script/larsoft_example/` (page 9)
 
 | script | what it does |

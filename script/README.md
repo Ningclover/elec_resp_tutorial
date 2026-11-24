@@ -12,3 +12,4 @@ Quick start (from this directory):
 - `p*.py`, `make_avg_pulses.py`, `pdvd_hdf5_decode.py`, `elecresp.py`: plain python3 (numpy, scipy, matplotlib, h5py).
 - `calib_chain/`: LArSoft/ROOT calibration chain, copied from the earlier work; it still has the original FNAL paths.
 - `sp_chain/`: self-contained NF+SP ON/OFF bundle (needs /cvmfs and apptainer).
+- `noise_rms/`: noise RMS per channel before and after the noise filter; see `noise_rms/README.md`.

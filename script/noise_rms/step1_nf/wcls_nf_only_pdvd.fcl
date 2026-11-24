@@ -1,0 +1,38 @@
+#include "standard_reco_pdvd_offline.fcl"
+
+# ============================================================================
+# wcls-NF-ONLY for ProtoDUNE-VD.
+#
+# Based on standard_reco_pdvd_offline.fcl.  That fcl defines wclsdatavdnf
+# (@local::protodunevd_nf -> pgrapher/experiment/protodunevd/wcls-nf.jsonnet,
+# NF only, output raw::RawDigit tagged "raw"), but only runs the full NF+SP
+# producer wclsdatavd in its produce path.
+#
+# Here we run ONLY the NF chain: rns -> tpcrawdecoder -> wclsdatavdnf, so the
+# output artROOT holds tpcrawdecoder:daq (raw) + wclsdatavdnf:raw (NF), which is
+# exactly what nf_script_vd_old/convert_artroot_noise_plot.C reads.
+#
+# Process only the FIRST event.  Keep everything so both RawDigit collections
+# survive, like the old HD reference artROOT.
+# ============================================================================
+
+process_name: pdvdnfonly
+
+# first event only
+source.maxEvents: 1
+
+# NF-only trigger path
+physics.produce: [ rns, tpcrawdecoder, wclsdatavdnf ]
+physics.trigger_paths: [ produce ]
+physics.end_paths: [ output ]
+
+# The stock protodunevd wcls-nf.jsonnet lets OmnibusNoiseFilter default to
+# intraces='orig', but the fanned-out per-anode frames are not trace-tagged
+# 'orig', so NF emits EMPTY frames (wclsdatavdnf:raw came out 0-sample).
+# wcls-nf-fixed.jsonnet passes intraces='' (use all traces), matching how the
+# HD nf.jsonnet does it.
+physics.producers.wclsdatavdnf.wcls_main.configs: ["wcls-nf-fixed.jsonnet"]
+
+# keep everything, incl. both RawDigit collections
+outputs.out1.fileName: "%ifb_nf_stage1.root"
+outputs.out1.outputCommands: [ "keep *" ]
